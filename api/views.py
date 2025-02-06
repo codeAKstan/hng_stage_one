@@ -3,23 +3,19 @@ from django.http import JsonResponse
 from django.views.decorators.http import require_GET
 
 @require_GET
-def classify_number(request):
-    number = request.GET.get('number')
-
+def classify_number(request, number):
     # Input validation
-    if not number or not number.lstrip('-').isdigit():
+    if not isinstance(number, int):
         return JsonResponse({
             "number": number,
             "error": True
         }, status=400)
 
-    number = int(number)
-
     # Check if the number is prime
     def is_prime(n):
         if n < 2:
             return False
-        for i in range(2, int(n**0.5) + 1):
+        for i in range(2, int(abs(n)**0.5) + 1):
             if n % i == 0:
                 return False
         return True
@@ -28,14 +24,14 @@ def classify_number(request):
     def is_perfect(n):
         if n < 2:
             return False
-        divisors = [i for i in range(1, n) if n % i == 0]
-        return sum(divisors) == n
+        divisors = [i for i in range(1, abs(n)) if n % i == 0]
+        return sum(divisors) == abs(n)
 
     # Check if the number is an Armstrong number
     def is_armstrong(n):
-        digits = [int(d) for d in str(n)]
+        digits = [int(d) for d in str(abs(n))]
         length = len(digits)
-        return sum(d**length for d in digits) == n
+        return sum(d**length for d in digits) == abs(n)
 
     # Calculate the sum of digits
     digit_sum = sum(int(d) for d in str(abs(number)))
