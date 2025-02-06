@@ -5,7 +5,9 @@ from django.views.decorators.http import require_GET
 @require_GET
 def classify_number(request, number):
     # Input validation
-    if not isinstance(number, int):
+    try:
+        number = int(number)  # Convert input to integer
+    except ValueError:
         return JsonResponse({
             "number": number,
             "error": True
